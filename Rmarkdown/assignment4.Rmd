@@ -31,7 +31,7 @@ temp <- 20
 parms = list(canopy = 100, carry = 500, r = 0.01, g = 2, temp = 20)
 
 
-c_growth = ode(y=forest0, times=years, func=forest, parms=parms)
+c_growth = ode(y=forest0, time=years, func=forest, parms=parms)
 
 
 ```
