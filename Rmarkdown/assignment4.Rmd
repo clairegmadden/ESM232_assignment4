@@ -19,7 +19,7 @@ library(deSolve)
 source("../R/dynamic_model.R")
 
 # set parameters
-forest0 <- 10
+C <- 10
 years <- seq(from=1, to=300, by=1)
 canopy <- 100
 carry <- 500
@@ -28,10 +28,12 @@ g <- 2
 temp <- 20
 
 
-parms = list(canopy = 100, carry = 500, r = 0.01, g = 2, temp = 20)
+parms = c(canopy = canopy, carry = carry, r = r, g = g, temp = temp, C = C)
 
 
-c_growth = ode(y=forest0, time=years, func=forest, parms=parms)
+c_growth = ode(y=C, times = years, func=forestgrowth, parms=parms)
+
+
 
 
 ```
@@ -46,6 +48,28 @@ dC/dt = g. for forests where carbon is above the threshold canopy closure
 
 dC/dt = 0 once carrying capacity is reached.
 
+```{r}
+
+source("../R/model2.R")
+
+
+# set parameters
+initalC <- 10
+years <- seq(from=1, to=300, by=1)
+canopy <- 100
+carry <- 500
+r <- 0.01
+g <- 2
+temp <- 20
+
+
+parms = c(canopy = canopy, carry = carry, r = r, g = g, temp = temp, initialC = initialC)
+
+
+c_growth = ode(y=C, times = years, func=forestgrowth, parms=parms)
+
+
+```
 
 
 The size of the forest (C), Canopy closure threshold and carrying capacity are all in units of carbon 

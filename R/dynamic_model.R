@@ -9,8 +9,9 @@
 
 #parms = list(canopy = 100, carry = 500, r = 0.01, g = 2, temp = 20)
 
-forest = function(canopy, carry, r, g, temp, C) {
-  if(temp<=0){
+forestgrowth = function(canopy = 100, carry = 500, r = 0.01, g =2, temp = 20) {
+  
+   if(temp <= 0){
     growth = 0}
   
   else{
@@ -23,12 +24,16 @@ forest = function(canopy, carry, r, g, temp, C) {
     }
   }
   
-  if(C >= K){
+  if(C >= carry){
     growth = 0
   }
   
-  return(list(growth))
+  forest = C + growth
+  
+  return(list(growth, forest))
   
 }
 
   
+
+
