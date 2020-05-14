@@ -9,7 +9,7 @@
 
 #parms = list(canopy = 100, carry = 500, r = 0.01, g = 2, temp = 20)
 
-forestgrowth = function(canopy = 100, carry = 500, r = 0.01, g =2, temp = 20) {
+forestgrowth = function(time, C, canopy = 100, carry = 500, r = 0.01, g =2, temp = 20) {
   
    if(temp <= 0){
     growth = 0}
@@ -28,9 +28,7 @@ forestgrowth = function(canopy = 100, carry = 500, r = 0.01, g =2, temp = 20) {
     growth = 0
   }
   
-  forest = C + growth
-  
-  return(list(growth, forest))
+  return(list(growth))
   
 }
 

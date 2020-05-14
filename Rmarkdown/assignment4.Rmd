@@ -28,13 +28,14 @@ g <- 2
 temp <- 20
 
 
-parms = c(canopy = canopy, carry = carry, r = r, g = g, temp = temp, C = C)
+parms = list(canopy = 100, carry = 500, r = 0.01, g = 2, temp = 20)
 
 
-c_growth = ode(y=C, times = years, func=forestgrowth, parms=parms)
+results = ode(y=C, times = years, func=forestgrowth, parms=parms)
 
+head(results)
 
-
+colnames(results) = c("Year", "KgC")
 
 ```
 
