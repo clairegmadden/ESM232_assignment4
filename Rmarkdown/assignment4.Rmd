@@ -1,43 +1,24 @@
 ---
-title: "assignment4"
-author: "Claire Madden"
-date: "5/12/2020"
+title: "ESM 232 Assignment 4"
+author: "Claire Madden & Lydia Bleifuss"
+date: "5/15/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include = FALSE}
 
-library(tidyverse)
-library(deSolve)
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE)
 ```
-
-
-
 
 ```{r}
-source("../R/dynamic_model.R")
-
-# set parameters
-C <- 10
-years <- seq(from=1, to=300, by=1)
-canopy <- 100
-carry <- 500
-r <- 0.01
-g <- 2
-temp <- 20
-
-
-parms = list(canopy = 100, carry = 500, r = 0.01, g = 2, temp = 20)
-
-
-results = ode(y=C, times = years, func=forestgrowth, parms=parms)
-
-head(results)
-
-colnames(results) = c("Year", "KgC")
-
+#Load the packages
+library(tidyverse)
+library(deSolve)
+library(sensitivity)
 ```
+
 
 Consider the following model of forest growth (where forest size in measured in units of carbon (C))
 
@@ -49,29 +30,6 @@ dC/dt = g. for forests where carbon is above the threshold canopy closure
 
 dC/dt = 0 once carrying capacity is reached.
 
-```{r}
-
-source("../R/model2.R")
-
-
-# set parameters
-initalC <- 10
-years <- seq(from=1, to=300, by=1)
-canopy <- 100
-carry <- 500
-r <- 0.01
-g <- 2
-temp <- 20
-
-
-parms = c(canopy = canopy, carry = carry, r = r, g = g, temp = temp, initialC = initialC)
-
-
-c_growth = ode(y=C, times = years, func=forestgrowth, parms=parms)
-
-
-```
-
 
 The size of the forest (C), Canopy closure threshold and carrying capacity are all in units of carbon 
 
@@ -82,7 +40,14 @@ You can think of r, as early exponential growth rate and g and the linear growth
 
 1. Implement this model in R (as a differential equation)
 
-2. Run the model for 300 years (using the ODE solver)  starting with an initial forest size of 10 kg/C, and using the following parameters
+```{r}
+
+source("../R/dynamic_model.R")
+
+```
+
+
+2a. Run the model for 300 years (using the ODE solver)  starting with an initial forest size of 10 kg/C, and using the following parameters
 
 canopy closure threshold of 100 kgC  - canopy
 
@@ -94,15 +59,126 @@ a early growth rate of 0.01 - r
 
 an air temperature of 20C - temp
 
-Graph the results
+```{r, message = FALSE}
 
-3. Run a sobol sensitivity analysis that explores how the estimated maximum forest size varies with early and later growth rates. 
+# set parameters
+C <- 10
+years <- seq(from=1, to=300, by=1)
+canopy <- 100
+carry <- 500
+r <- 0.01
+g <- 2
+temp <- 20
 
-Graph the results of the sensitivity analysis as a box plot and a plot of the two sobol indices (S and T)
+parms = list(canopy = 100, carry = 500, r = 0.01, g = 2, temp = 20)
+
+results = ode(y=C, times = years, func=forestgrowth, parms=parms)
+
+head(results)
+
+colnames(results) = c("Year", "KgC")
+
+```
+
+2b. Graph the results
+
+```{r}
+
+plot(results)
+
+```
 
 
+3a. Run a sobol sensitivity analysis that explores how the estimated maximum forest size varies with early and later growth rates. 
 
-Submit R markdown with model implementation, graphs and sensitivity analysis and R file with your model
+```{r}
+# SOBEL
+
+np=1000
+
+# generate two examples of random number from parmeter distributions
+
+r_s = rnorm(mean = 0.01, sd = 0.001, n=np)
+g_s = rnorm(mean = 2, sd = 0.1, n=np)
+
+# Sample 1
+
+X1 = cbind.data.frame(r_s,g_s)
+
+r_s = rnorm(mean = 0.01, sd = 0.001, n=np)
+g_s = rnorm(mean = 2, sd = 0.1, n=np)
+
+# Sample 2
+
+X2 = cbind.data.frame(r_s,g_s)
+
+
+sens1_sobel = sobol2007(model = NULL, X1, X2, nboot = 200)
+
+
+parms_sobel <- list(r = sens1_sobel$X$r_s[1], 
+              g = sens1_sobel$X$g_s[1],
+              canopy = 100,
+              carry = 500,
+              temp = 20) 
+
+
+results_sobel = ode(y=C, times = years, func=forestgrowth, parms=parms_sobel)
+
+
+head(results_sobel)
+colnames(results_sobel) = c("Time", "Forest_Growth")
+
+results_sobel = as.data.frame(results_sobel)
+
+plot(results_sobel)
+
+#Run sensitivity: It appears that our ode was only running with our first two values of r and g. Need to use mapply? 
+
+# sensitivity_sobel = sensitivity::tell(sens1_sobel,results_sobel, results_sobel.names="ga")
+
+
+# first-order indices (main effect without co-variance)
+# sens1_sobel$S
+
+# total sensitivity index -note that this partitions the output variance - so values sum to 1
+# sens1_sobel$T
+
+# The difference between the main effect and total effect can tell us something about how the parameter influences results
+# so in the main effect we include interactions with other parameters
+
+# print(sens1_sobel)
+# plot(sens1_sobel)
+
+```
+
+
+3b. Graph the results of the sensitivity analysis as a box plot and a plot of the two sobol indices (S and T)
+
+
+```{r}
+
+plot_sobel <- ggplot(data = results_sobel, aes(x = Time, y = Forest_Growth))+
+  geom_boxplot()+
+  labs(x = "Time",
+       y = "Forest Growth (kg C)",
+       title = "")+
+  theme_bw()
+
+
+plot_sobel
+
+```
+
+
+Submit R markdown with model implementation, graphs and sensitivity analysis and R file with your model: 
+
+Hi Rachel! 
+
+We are not sure where we are going wrong and are having trouble applying what is gone over in class to this assignmnet. We felt our code sluthing would be better directed to digging into our class project, which we are excited for! Would love to hear your feedback in what we could have done differently in this code. 
+
+Thanks!
+- Lydia & Claire 
 
 
 
