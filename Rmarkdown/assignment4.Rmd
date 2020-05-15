@@ -175,7 +175,7 @@ Submit R markdown with model implementation, graphs and sensitivity analysis and
 
 Hi Rachel! 
 
-We are not sure where we are going wrong and are having trouble applying what is gone over in class to this assignmnet. We felt our code sluthing would be better directed to digging into our class project, which we are excited for! Would love to hear your feedback in what we could have done differently in this code. 
+We are not sure where we are going wrong and are having trouble applying what we have gone over in class to this assignmnet. We felt our code sluthing energy would be better directed to digging into our class project, which we are excited for! Would love to hear your feedback on what we could have done differently in this code. 
 
 Thanks!
 - Lydia & Claire 
